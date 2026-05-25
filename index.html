@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INOX FERRO — Orçamentos Profissionais</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="logo.png" alt="INOX FERRO Logo" />
+    </div>
+    <h2>INOX FERRO</h2>
+    <p>Sistema de Orçamentos</p>
+    <input type="text" id="loginUser" class="login-input" placeholder="Utilizador" autocomplete="off">
+    <input type="password" id="loginPass" class="login-input" placeholder="Palavra-passe">
+    <button class="login-btn" onclick="verificarLogin()">Aceder</button>
+    <div id="loginError" class="error-msg"></div>
+  </div>
+</div>
+
+<div class="app-container" id="appContainer" style="display: none;">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <img src="logo.png" alt="INOX FERRO" class="logo-img" />
+        <div>
+          <div class="logo-name">INOX FERRO</div>
+          <div class="logo-sub">metal & estruturas</div>
+        </div>
+      </div>
+      <nav class="nav-tabs">
+        <button class="nav-btn active" data-tab="orcamento">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          Orçamento
+        </button>
+        <button class="nav-btn" data-tab="precos">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+          Tabela de Preços
+        </button>
+        <button class="nav-btn" data-tab="editar">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          Editar Preços
+        </button>
+        <button class="nav-btn" data-tab="orcamentos">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2-13H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
+          Orçamentos Guardados
+        </button>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-secondary" onclick="imprimirOrcamento()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          Imprimir
+        </button>
+        <button class="btn-secondary" onclick="guardarOrcamentoAtual()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 19V5M5 12h14M7 5h10a2 2 0 012 2v10a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
+          💾 Guardar
+        </button>
+        <button class="btn-primary" onclick="novoOrcamento()">+ Novo</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- TAB: ORÇAMENTO -->
+  <main id="tab-orcamento" class="tab-content active">
+    <div class="page-wrap">
+      <section class="builder-panel">
+        <div class="panel-header">
+          <h2>Construir Orçamento</h2>
+          <span class="badge" id="item-count">0 itens</span>
+        </div>
+
+        <div class="card">
+          <div class="card-title">👤 Dados do Cliente</div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Nome / Empresa</label>
+              <input type="text" id="cliente-nome" placeholder="Ex: João Silva" />
+            </div>
+            <div class="form-group">
+              <label>NIF</label>
+              <input type="text" id="cliente-nif" placeholder="123456789" />
+            </div>
+            <div class="form-group">
+              <label>Morada</label>
+              <input type="text" id="cliente-morada" placeholder="Rua, nº, Localidade" />
+            </div>
+            <div class="form-group">
+              <label>Telefone</label>
+              <input type="text" id="cliente-tel" placeholder="+351 9xx xxx xxx" />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="cliente-email" placeholder="email@exemplo.com" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">➕ Adicionar Produto</div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Categoria</label>
+              <select id="categoria" onchange="filtrarProdutos()">
+                <option value="">— Todas as categorias —</option>
+                <option>Tubos Quadrados</option>
+                <option>Tubos Redondos</option>
+                <option>MTA</option>
+                <option>Cantoneira</option>
+                <option>Barras</option>
+                <option>Chapas</option>
+                <option>IPÊ</option>
+                <option>HEB</option>
+                <option>Tubo FT</option>
+                <option>FERROT</option>
+                <option>Vergalhão</option>
+                <option>Varão Roscado</option>
+                <option>PVC</option>
+                <option>Bodóios</option>
+                <option>MDF</option>
+                <option>Viga Caleiros</option>
+                <option>Painéis 1d</option>
+                <option>INOX Mercanox</option>
+                <option>Motores Rui e Agostinho</option>
+                <option>Bucobbri</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Produto / Referência</label>
+              <select id="produto-sel" onchange="preencherPreco()">
+                <option value="">— Selecionar produto —</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Preço Unit. (€)</label>
+              <input type="number" id="preco-unit" step="0.01" min="0" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label>Quantidade</label>
+              <input type="number" id="quantidade" value="1" min="1" step="0.1" />
+            </div>
+            <div class="form-group full">
+              <label>Descrição / Notas</label>
+              <input type="text" id="descricao" placeholder="Descrição adicional (opcional)" />
+            </div>
+          </div>
+          <button class="btn-add" onclick="adicionarItem()">➕ Adicionar ao Orçamento</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">⚙️ Opções do Documento</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nº Orçamento</label>
+              <input type="text" id="num-orcamento" value="ORC-2025-001" />
+            </div>
+            <div class="form-group">
+              <label>Validade (dias)</label>
+              <input type="number" id="validade" value="30" />
+            </div>
+            <div class="form-group">
+              <label>Desconto global (%)</label>
+              <input type="number" id="desconto" value="0" min="0" max="100" step="0.5" onchange="renderizarPreview()" />
+            </div>
+            <div class="form-group">
+              <label>IVA (%)</label>
+              <select id="iva" onchange="renderizarPreview()">
+                <option value="23">23%</option>
+                <option value="6">6%</option>
+                <option value="0">0% (Isento)</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Modo de impressão</label>
+              <div class="toggle-group">
+                <button class="toggle-btn active" id="modo-completo" onclick="setModo('completo')">Com preços detalhados</button>
+                <button class="toggle-btn" id="modo-simples" onclick="setModo('simples')">Só valor final</button>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>Notas / Observações</label>
+              <textarea id="notas" rows="3" placeholder="Condições de pagamento, prazos de entrega, etc."></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="preview-panel">
+        <div class="panel-header">
+          <h2>📄 Pré-visualização</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="live-dot"></span>
+            <span style="font-size:12px;color:#888">ao vivo</span>
+          </div>
+        </div>
+        <div class="orcamento-doc" id="orcamento-preview"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- TAB: TABELA DE PREÇOS -->
+  <main id="tab-precos" class="tab-content">
+    <div class="precos-wrap">
+      <div class="precos-header">
+        <h2>📋 Tabela de Preços</h2>
+        <div class="search-box">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="search-precos" placeholder="Pesquisar produto..." oninput="filtrarTabela()" />
+        </div>
+      </div>
+      <div id="tabela-precos-container"></div>
+    </div>
+  </main>
+
+  <!-- TAB: EDITAR PREÇOS -->
+  <main id="tab-editar" class="tab-content">
+    <div class="precos-wrap">
+      <div class="precos-header">
+        <h2>✏️ Editar Preços</h2>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-secondary" onclick="exportarJSON()">📁 Exportar</button>
+          <button class="btn-primary" onclick="guardarAlteracoes()">💾 Guardar Tudo</button>
+        </div>
+      </div>
+      <p style="color:#888;font-size:13px;margin-bottom:1.5rem;">✏️ Clique no campo para editar | 🗑️ Eliminar produto | ➕ Adicionar nova linha</p>
+      <div id="editar-precos-container"></div>
+    </div>
+  </main>
+
+  <!-- TAB: ORÇAMENTOS GUARDADOS -->
+  <main id="tab-orcamentos" class="tab-content">
+    <div class="precos-wrap">
+      <div class="precos-header">
+        <h2>📂 Orçamentos Guardados</h2>
+        <button class="btn-primary" onclick="guardarOrcamentoAtual()">💾 Guardar Orçamento Atual</button>
+      </div>
+      <div id="orcamentos-lista"></div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
